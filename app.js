@@ -10,15 +10,50 @@ watch('matches',function(filename){
 })
 
 
+
 function startLoop(matches){
+	console.log('i am in startLoop')
     setInterval(function(){
         matches.forEach(function(item,i){
-            parseMatch(item.link,item.name, function(json) {
-              console.log(json)
-            });
+						var localTime = new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
+						var itemTime = item.strt_time;
+
+						function toSeconds(time_str) {
+						    // Extract hours, minutes and seconds
+						    var parts = time_str.split(':');
+						    // compute  and return total seconds
+						    return parts[0] * 3600 + // an hour has 3600 seconds
+						    parts[1] * 60 + // a minute has 60 seconds
+						    +
+						    parts[2]; // seconds
+						}
+
+						var difference = Math.abs(toSeconds(localTime) - toSeconds(itemTime));
+
+						var result = [
+						    Math.floor(difference / 3600), // an hour has 3600 seconds
+						    Math.floor((difference % 3600) / 60), // a minute has 60 seconds
+						    difference % 60
+						];
+
+
+						result = result.map(function(v) {
+						    return v < 10 ? '0' + v : v;
+						}).join(':');
+						var differenceTime = result.split(':')
+						if(differenceTime[0] == 0 && differenceTime[1] <= 15 && differenceTime[2] >= 10){
+							console.log('match found')
+							parseMatch(item.link,item.name, function(json) {
+            		// console.log(json)
+            	})
+						}else{
+							console.log('there is no matches to start yet')
+						}
         });
     }, 5000);
 }
+
+
 
 function parseMatch(link,name, cb){
     console.log("parseMatch");
@@ -48,19 +83,16 @@ function parseMatch(link,name, cb){
                 var file_match_name = name+'.json'
                 var saveFileWhere = 'parsedMatches'
                 var check_file = saveFileWhere + '/' + file_match_name
-                console.log(check_file)
                 fs.stat(check_file, function(err, stat) {
 							    if(err == null) {
 							    	var options = { flag : 'w' };
 								    fs.writeFile(check_file,JSON.stringify(json), options, function(err) {
 								        if (err) throw err;
-								        console.log('file overwriten');
 								    });
 							    } else if(err.code == 'ENOENT') {
 							        // file does not exist
 							        fs.writeFile(check_file,JSON.stringify(json),function(err){
 			                	if (err) throw err;
-			  								console.log('file with name ',file_match_name,' saved');
 			                })
 							    } else {
 							        console.log('Some other error: ', err.code);

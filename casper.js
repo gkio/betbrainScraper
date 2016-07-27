@@ -46,8 +46,6 @@ casper.thenOpen(nextMatchesUrl, function() {
         var getTime = $('#toolbar #optionsList li#timeChoice .OptionsText #timeUpdate').text()
         return getTime
     })
-    this.echo(MatchNames);
-    this.echo(time);
     function getAllMatchesNames(){
         var matchesLength = $('.TheMatch.LiveSoon').length
         var matchNamesObj = [];
@@ -62,18 +60,16 @@ casper.thenOpen(nextMatchesUrl, function() {
                 var date = new Date()
                 row.link = 'https://www.betbrain.com' + ($('.TheMatch.LiveSoon:eq('+ i +')').find('div.MatchDetails .MDLink').attr('href')) + '1x2/full-time-excluding-overtime/?only=true&_=' + +date
                 row.strt_time = $('.TheMatch.LiveSoon:eq('+ i +')').find('div.MatchDetails .MDLink .Setting.DateTime').text()
-                row.strt_time = row.strt_time.substr(row.strt_time.length - 5)
+                row.strt_time = row.strt_time.substr(row.strt_time.length - 5) + ':00'
                 row.bookmakers = $('.TheMatch.LiveSoon:eq('+ i +')').find('div.MatchDetails .TotalBookies').text()
                 matchNamesObj.push(row)
             }
         }
         return matchNamesObj
     }
-        var jsonFile = './matches/filzxceNew.json'
+        var jsonFile = './matches/matches.json'
         fs.write(jsonFile, JSON.stringify(MatchNames));
-
 });
-
 // casper.thenOpen('http://phantomjs.org', function() {
 //     this.echo(this.getTitle());
 // });
