@@ -13,8 +13,7 @@ watch('matches',function(filename){
 
 function startLoop(matches){
 	console.log('i am in startLoop')
-    setInterval(function(){
-        matches.forEach(function(item,i){
+	        matches.forEach(function(item,i){
 						var localTime = new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds()
 						var itemTime = item.strt_time;
 
@@ -43,14 +42,17 @@ function startLoop(matches){
 						var differenceTime = result.split(':')
 						if(differenceTime[0] == 0 && differenceTime[1] <= 15 && differenceTime[2] >= 10){
 							console.log('match found')
-							parseMatch(item.link,item.name, function(json) {
-            		// console.log(json)
-            	})
+							    setInterval(function(){
+										parseMatch(item.link,item.name, function(json) {
+			            		// console.log(json)
+			            	})
+    							}, 5000);
+
 						}else{
 							console.log('there is no matches to start yet')
 						}
         });
-    }, 5000);
+
 }
 
 
